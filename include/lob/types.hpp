@@ -52,13 +52,22 @@ struct Trade {
     Side      aggressor_side;
 };
 
-// Status of a single submit_order() call.
+// Status of a single submit() call. The (filled_qty, remaining_qty) pair gives
+// the precise outcome; this enum is the convenient summary.
+//   Accepted        - rested on the book with no part filled
+//   FullyFilled     - matched in full, nothing rested
+//   PartiallyFilled - some part filled. For GTC the remainder rested; for IOC
+//                     the remainder was cancelled. Inspect remaining_qty +
+//                     the original TIF to disambiguate.
+//   Cancelled       - no fill at all, no rest. FOK reject, IOC vs empty book,
+//                     POST_ONLY would-cross.
+//   Rejected        - rejected before any side-effects (bad input).
 enum class OrderStatus : std::uint8_t {
-    Accepted       = 0,  // resting on the book (in whole or in part)
-    FullyFilled    = 1,
-    PartiallyFilled = 2,  // returned for IOC with partial fill
-    Cancelled      = 3,  // IOC unfilled, FOK rejected, POST_ONLY rejected
-    Rejected       = 4,  // out-of-window price, duplicate id, etc.
+    Accepted        = 0,
+    FullyFilled     = 1,
+    PartiallyFilled = 2,
+    Cancelled       = 3,
+    Rejected        = 4,
 };
 
 struct SubmitResult {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 // Branch hints. C++20 has [[likely]]/[[unlikely]] but they only apply to
 // statements; these macros let us decorate expressions as well.
 #if defined(__GNUC__) || defined(__clang__)

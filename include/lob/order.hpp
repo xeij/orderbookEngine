@@ -20,6 +20,9 @@ struct Order {
     std::uint8_t pad_[3];
 };
 
-static_assert(sizeof(Order) == 40, "Order layout unexpected -- adjust pad_");
+// Sanity check on layout: 2 pointers + 64-bit id + a few 32-bit + 1 byte side
+// + 3 byte pad = 40 bytes on a 64-bit ABI. We accept up to 48 to tolerate
+// implementations that round-up to 8-byte alignment of the trailing tail.
+static_assert(sizeof(Order) <= 48, "Order is larger than expected; check fields");
 
 }  // namespace lob

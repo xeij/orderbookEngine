@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(ls -la \"C:\\\\Users\\\\xeij\\\\Desktop\\\\code\\\\limitOrderBookEngine\")",
-      "Bash(dir \"C:\\\\Users\\\\xeij\\\\Desktop\\\\code\\\\limitOrderBookEngine\")"
+      "Bash(dir \"C:\\\\Users\\\\xeij\\\\Desktop\\\\code\\\\limitOrderBookEngine\")",
+      "Bash(cmake --version)",
+      "Read(//mingw64/**)",
+      "Read(//mingw64/bin/**)",
+      "Read(//c/msys64/mingw64/bin/**)",
+      "Read(//c/MinGW/**)",
+      "Read(//c/Strawberry/c/bin/**)",
+      "Read(//c/ProgramData/chocolatey/lib/**)"
     ]
   }
 }
