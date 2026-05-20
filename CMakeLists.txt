@@ -44,10 +44,12 @@ elseif(MSVC)
         $<$<CONFIG:Release>:/O2 /Oi /GL>)
 endif()
 
-# Core matching-engine library. Headers carry the hot-path code; the .cpp files
-# exist so the symbols have a definition unit and the build catches ODR issues.
+# Core matching-engine library. The matching engine itself lives entirely in
+# headers (it is templated on the trade sink so LTO/inlining can collapse the
+# hot path). Only the ITCH parser and a small instantiation TU sit here as
+# real translation units.
 add_library(lob_core
-    src/order_book.cpp
+    src/lob_instantiate.cpp
     src/itch_parser.cpp)
 target_include_directories(lob_core PUBLIC include)
 target_link_libraries(lob_core PUBLIC lob_warnings lob_release_flags)
