@@ -70,6 +70,13 @@ public:
     }
     [[nodiscard]] std::size_t open_orders() const noexcept { return slab_.in_use(); }
 
+    // Direct lookup -- used by the replay harness to read an existing order's
+    // side before issuing a replace (the new ITCH 'U' message does not carry
+    // the side; we have to remember it from the original 'A' message).
+    [[nodiscard]] const Order* find(OrderId id) const noexcept {
+        return id_map_.find(id);
+    }
+
     struct LevelSnapshot {
         Price         price;
         Quantity      qty;
@@ -185,6 +192,25 @@ public:
         remove_from_book_(o);
         id_map_.erase(id);
         slab_.deallocate(o);
+        return true;
+    }
+
+    // Reduce a resting order's quantity by `by`. Used when replaying ITCH
+    // 'E' (Order Executed) and 'X' (Order Cancel partial) messages, which
+    // express exchange-side decrements that already happened. Returns false
+    // if the id is unknown; if the reduction empties the order, the order
+    // is removed.
+    LOB_HOT bool reduce(OrderId id, Quantity by) noexcept {
+        Order* o = id_map_.find(id);
+        if (LOB_UNLIKELY(o == nullptr)) return false;
+        if (by >= o->quantity) {
+            remove_from_book_(o);
+            id_map_.erase(id);
+            slab_.deallocate(o);
+            return true;
+        }
+        o->quantity -= by;
+        level_(o->side, o->level_idx).total_qty -= by;
         return true;
     }
 
