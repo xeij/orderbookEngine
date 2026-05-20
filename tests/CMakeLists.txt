@@ -16,6 +16,7 @@ add_executable(lob_tests
     test_matching.cpp
     test_tif.cpp
     test_spsc_ring.cpp
+    test_itch_parser.cpp
 )
 target_link_libraries(lob_tests PRIVATE lob_core Catch2::Catch2WithMain)
 
